@@ -86,7 +86,15 @@ object Anagrams extends App {
    *  in the example above could have been displayed in some other order.
    */
 
-  def subseqs(fp: FingerPrint): List[FingerPrint] = ???
+  def subseqs(fp: FingerPrint): List[FingerPrint] = {
+    //var list:List[FingerPrint] = List(fingerPrint(""))
+    //for(fp <- )
+    //fp.indices.flatMap(i => (1 until fp.size).withFilter(x => fp.combinations(x + 1).map(j => i)))
+    fp.indices.flatMap(x => fp.combinations(x + 1)).toList :+ ""
+
+  }
+
+  println(subseqs("abbc"))
 
 
   // Test code with for example:
