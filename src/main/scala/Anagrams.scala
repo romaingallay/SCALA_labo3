@@ -27,7 +27,7 @@ object Anagrams extends App {
    *  that you can load to use with your program  
    */
 
-  val dictionary: List[Word] =    
+  val dictionary: List[Word] =
     List("ate", "eat", "tea", "pot", "top", "sonja", "jason", "normal",
          "I", "love", "you", "olive")
 
@@ -66,7 +66,10 @@ object Anagrams extends App {
 
 
   /** Returns all the anagrams of a given word. */
-  def wordAnagrams(word: Word): List[Word] = ???
+  def wordAnagrams(word: Word): List[Word] =
+  //def wordAnagrams(word: Word): List[Word] = dictionary.groupBy(word.flatMap(x => matchingWords(word)).withDefaultValue(List()
+    matchingWords(fingerPrint(word))
+
 
   // Test code with for example:
   // println(wordAnagrams("eta"))
@@ -108,8 +111,15 @@ object Anagrams extends App {
    *  appear in `x`.
    */
 
-  def subtract(x: FingerPrint, y: FingerPrint): FingerPrint = ???
+  def subtract(x: FingerPrint, y: FingerPrint): FingerPrint =
+    /*y.toMap.foldLeft(x.toMap)(
+    (acc, pair) => acc.updated(pair._1, acc(pair._1) - pair._2)
+  ).toList.filter(_._2 > 0).sorted
 
+    y.foldLeft(x.toMap)(
+    (acc, pair) => acc.updated(pair._1, acc(pair._1) - pair._2)
+  ).toList.filter(_._2 > 0).sorted
+*/
   // Test code with for example:
   // println(subtract("aabbcc", "abc"))
 
@@ -133,7 +143,7 @@ object Anagrams extends App {
    *  Note: There is only one anagram of an empty sentence.
    */
 
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+  def sentenceAnagrams(sentence: Sentence): List[Sentence] = null
 
   // Test code with for example:
   // println(sentenceAnagrams(List("eat", "tea")))
