@@ -53,7 +53,7 @@ object Anagrams extends App {
    *   "aet"-> List("ate", "eat", "tea")
    */
 
-  val matchingWords: Map[FingerPrint, List[Word]] = dictionary.groupBy(word => fingerPrint1(word))
+  val matchingWords: Map[FingerPrint, List[Word]] = dictionary.groupBy(word => fingerPrint(word))
 
 
   /** Returns all the anagrams of a given word. */
