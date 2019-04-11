@@ -53,13 +53,13 @@ object Anagrams extends App {
    *   "aet"-> List("ate", "eat", "tea")
    */
 
-  val matchingWords: Map[FingerPrint, List[Word]] = dictionary.groupBy(word => fingerPrint(word))
+  val matchingWords: Map[FingerPrint, List[Word]] = dictionary.groupBy(word => fingerPrint(word)).withDefaultValue(List())
 
 
   /** Returns all the anagrams of a given word. */
   def wordAnagrams(word: Word): List[Word] =
   //def wordAnagrams(word: Word): List[Word] = dictionary.groupBy(word.flatMap(x => matchingWords(word)).withDefaultValue(List()
-    matchingWords(fingerPrint(word))
+    matchingWords(fingerPrint(word)) // with default "" a ajouter (methode en bas)
 
 
   // Test code with for example:
@@ -81,10 +81,7 @@ object Anagrams extends App {
    */
 
   def subseqs(fp: FingerPrint): List[FingerPrint] = {
-    //var list:List[FingerPrint] = List(fingerPrint(""))
-    //for(fp <- )
-    //fp.indices.flatMap(i => (1 until fp.size).withFilter(x => fp.combinations(x + 1).map(j => i)))
-    fp.indices.flatMap(x => fp.combinations(x + 1)).toList :+ ""
+    (fp.indices.flatMap(x => fp.combinations(x + 1)).toList :+ "").distinct
 
   }
 
@@ -102,40 +99,40 @@ object Anagrams extends App {
    *  appear in `x`.
    */
 
-  def subtract(x: FingerPrint, y: FingerPrint): FingerPrint =
-    /*y.toMap.foldLeft(x.toMap)(
-    (acc, pair) => acc.updated(pair._1, acc(pair._1) - pair._2)
-  ).toList.filter(_._2 > 0).sorted
 
-    y.foldLeft(x.toMap)(
-    (acc, pair) => acc.updated(pair._1, acc(pair._1) - pair._2)
-  ).toList.filter(_._2 > 0).sorted
-*/
-  // Test code with for example:
-  // println(subtract("aabbcc", "abc"))
+    def subtract(x: String, y: String): String = {
+      fingerPrint(x).toList.diff(fingerPrint(y).toList).mkString
+    }
+    // Test code with for example:
+    subtract("aabbcc", "abc")  // should return "abc"
+    subtract("a", "abc")       // should return ""
+    subtract("xyz", "z")       // should return xy
+    subtract("xxxxyzzzz", "xxzz")       // should return xxyzz
+    subtract("", "xxzz")      // should return ""
+    subtract("", "abc")      // should return ""
 
 
-  /** Returns a list of all anagram sentences of the given sentence.
-   *
-   *  An anagram of a sentence is formed by taking the fingerprint of all the characters of
-   *  all the words in the sentence, and producing all possible combinations of words with those characters,
-   *  such that the words have to be from the dictionary.
-   *
-   *  The number of words in the sentence and its anagrams does not have to correspond.
-   *  For example, the sentence `List("I", "love", "you")` is an anagram of the sentence `List("You", "olive")`.
-   *
-   *  Also, two sentences with the same words but in a different order are considered two different anagrams.
-   *  For example, sentences `List("You", "olive")` and `List("olive","you")` are different anagrams of
-   *  `List("I", "love", "you")`.
-   *
-   *  Note: in case that the words of the sentence are in the dictionary, then the sentence is the anagram of itself,
-   *  so it has to be returned in this list.
-   *
-   *  Note: There is only one anagram of an empty sentence.
-   */
-
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = null
-
+    /** Returns a list of all anagram sentences of the given sentence.
+      *
+      * An anagram of a sentence is formed by taking the fingerprint of all the characters of
+      * all the words in the sentence, and producing all possible combinations of words with those characters,
+      * such that the words have to be from the dictionary.
+      *
+      * The number of words in the sentence and its anagrams does not have to correspond.
+      * For example, the sentence `List("I", "love", "you")` is an anagram of the sentence `List("You", "olive")`.
+      *
+      * Also, two sentences with the same words but in a different order are considered two different anagrams.
+      * For example, sentences `List("You", "olive")` and `List("olive","you")` are different anagrams of
+      * `List("I", "love", "you")`.
+      *
+      * Note: in case that the words of the sentence are in the dictionary, then the sentence is the anagram of itself,
+      * so it has to be returned in this list.
+      *
+      * Note: There is only one anagram of an empty sentence.
+      */
+    def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+      return List()
+    }
   // Test code with for example:
   // println(sentenceAnagrams(List("eat", "tea")))
   // println(sentenceAnagrams(List("you", "olive")))
