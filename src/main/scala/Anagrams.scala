@@ -1,3 +1,4 @@
+import scala.io.Source
 import scala.collection.immutable._
 
 
@@ -27,10 +28,15 @@ object Anagrams extends App {
    *  that you can load to use with your program  
    */
 
-  val dictionary: List[Word] =
+  val dictionaryTest: List[Word] =
     List("ate", "eat", "tea", "pot", "top", "sonja", "jason", "normal",
          "I", "love", "you", "olive")
 
+  val dictionary = loadDictionary()
+
+  def loadDictionary():List[Word] = {
+    Source.fromFile("linuxwords.txt").getLines.toList
+  }
 
   /** Converts a word/sentence into its fingerprint.
    *  The fingerprint has the same characters as the word, with the same
@@ -53,7 +59,7 @@ object Anagrams extends App {
    *   "aet"-> List("ate", "eat", "tea")
    */
 
-  val matchingWords: Map[FingerPrint, List[Word]] = dictionary.groupBy(word => fingerPrint(word)).withDefaultValue(List())
+  val matchingWords: Map[FingerPrint, List[Word]] = dictionaryTest.groupBy(word => fingerPrint(word)).withDefaultValue(List())
 
 
   /** Returns all the anagrams of a given word. */
@@ -131,11 +137,29 @@ object Anagrams extends App {
       * Note: There is only one anagram of an empty sentence.
       */
     def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-      return List()
+      val fgprint = fingerPrint(sentence)
+      def findAnagrams(finger : FingerPrint, wordAcc : List[Word],
+                       actualWordAcc: List[Word], accumulator : Sentence = List(),
+                       accSentence: List[Sentence] = List()) : List[Sentence] = {
+        wordAcc match {
+          case Nil => accSentence
+          case _ if (finger == "") => accumulator :: accSentence
+          case x::xs => {
+            if (subtract(x, finger) == "") {
+              findAnagrams(subtract(finger, x), wordAcc, actualWordAcc, x :: accumulator, accSentence) ++ findAnagrams(finger, xs, actualWordAcc, accumulator, accSentence)
+            } else {
+              findAnagrams(finger, xs, actualWordAcc, accumulator, accSentence)
+            }
+          }
+        }
+      }
+      val wordAcc = subseqs(fgprint).flatMap(wordAnagrams)
+      findAnagrams(fgprint, wordAcc, wordAcc)
     }
   // Test code with for example:
   // println(sentenceAnagrams(List("eat", "tea")))
-  // println(sentenceAnagrams(List("you", "olive")))
-  // println(sentenceAnagrams(List("I", "love", "you")))
+   println(sentenceAnagrams(List("you", "olive")))
+   println(sentenceAnagrams(List("I", "love", "you")))
+  println(sentenceAnagrams(List("jason", "love", "you")))
 
 }
