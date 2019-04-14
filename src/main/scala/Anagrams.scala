@@ -1,6 +1,7 @@
 import scala.io.Source
 import scala.collection.immutable._
 
+/** Modified by Romain Gallay & Walid Koubaa **/
 
 object Anagrams extends App {
 
@@ -35,7 +36,7 @@ object Anagrams extends App {
   val dictionary = loadDictionary()
 
   def loadDictionary():List[Word] = {
-    Source.fromFile("linuxwords.txt").getLines.toList
+    Source.fromFile("linuxwords.txt").getLines.toList   // open the linuxwords.txt dictionnary file
   }
 
   /** Converts a word/sentence into its fingerprint.
@@ -43,9 +44,9 @@ object Anagrams extends App {
    *  number of occurrences, but the characters appear in sorted order.
    */
 
-  def fingerPrint(s: Word): FingerPrint = s.toLowerCase sorted
-  def fingerPrint(s: Sentence): FingerPrint = fingerPrint(s.reduceLeft(_ + _))
-
+  def fingerPrint(s: Word): FingerPrint = s.toLowerCase sorted      //sort the Word
+  def fingerPrint(s: Sentence): FingerPrint = fingerPrint(s.reduceLeft(_ + _))  // sort all the sentence words and return
+                                                                                // the Fingerprint
 
   /** `matchingWords` is a `Map` from fingerprints to a sequence of all
    *  the words that have that fingerprint.
@@ -59,7 +60,7 @@ object Anagrams extends App {
    *   "aet"-> List("ate", "eat", "tea")
    */
 
-  val matchingWords: Map[FingerPrint, List[Word]] = dictionaryTest.groupBy(word => fingerPrint(word)).withDefaultValue(List())
+  val matchingWords: Map[FingerPrint, List[Word]] = dictionary.groupBy(word => fingerPrint(word)).withDefaultValue(List())
 
 
   /** Returns all the anagrams of a given word. */
@@ -67,8 +68,8 @@ object Anagrams extends App {
 
 
   // Test code with for example:
-  // println(wordAnagrams("eta"))
-  // println(wordAnagrams("jbdikb"))
+   println(wordAnagrams("eta"))
+   println(wordAnagrams("jbdikb"))
 
 
   /** Returns the list of all subsequences of a fingerprint.
@@ -86,11 +87,12 @@ object Anagrams extends App {
 
   def subseqs(fp: FingerPrint): List[FingerPrint] = {
     (fp.indices.flatMap(x => fp.combinations(x + 1)).toList :+ "").distinct
+    // by default we append the empty string to the list of subsequences
 
   }
 
   // Test code with for example:
-  // println(subseqs("aabbc"))
+   println(subseqs("aabbc"))
 
 
   /** Subtracts fingerprint `y` from fingerprint `x`.
@@ -102,8 +104,15 @@ object Anagrams extends App {
 
 
     def subtract(x: FingerPrint, y: FingerPrint): String = {
-      x.toList.diff(y.toList).mkString
+      x.toList.diff(y.toList).mkString    // substract all characters appearing in y from x
     }
+    // Test code with for example:
+    println(subtract("aabbcc", "abc"))     // should return "abc"
+    println(subtract("a", "abc"))          // should return ""
+    println(subtract("xyz", "z"))          // should return xy
+    println(subtract("xxxxyzzzz", "xxzz")) // should return xxyzz
+    println(subtract("", "xxzz"))          // should return ""
+    println(subtract("", "abc"))           // should return ""
 
 
     /** Returns a list of all anagram sentences of the given sentence.
@@ -138,7 +147,7 @@ object Anagrams extends App {
       loop(fingerPrint(sentence))
     }
   // Test code with for example:
-  // println(sentenceAnagrams(List("eat", "tea")))
+   println(sentenceAnagrams(List("eat", "tea")))
    println(sentenceAnagrams(List("you", "olive")))
    println(sentenceAnagrams(List("I", "love", "you")))
    println(sentenceAnagrams(List("jason", "love", "you")))
