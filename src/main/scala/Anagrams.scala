@@ -106,8 +106,8 @@ object Anagrams extends App {
    */
 
 
-    def subtract(x: String, y: String): String = {
-      fingerPrint(x).toList.diff(fingerPrint(y).toList).mkString
+    def subtract(x: FingerPrint, y: FingerPrint): String = {
+      x.toList.diff(y.toList).mkString
     }
     // Test code with for example:
     subtract("aabbcc", "abc")  // should return "abc"
