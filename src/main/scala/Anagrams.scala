@@ -63,9 +63,7 @@ object Anagrams extends App {
 
 
   /** Returns all the anagrams of a given word. */
-  def wordAnagrams(word: Word): List[Word] =
-  //def wordAnagrams(word: Word): List[Word] = dictionary.groupBy(word.flatMap(x => matchingWords(word)).withDefaultValue(List()
-    matchingWords(fingerPrint(word)) // with default "" a ajouter (methode en bas)
+  def wordAnagrams(word: Word): List[Word] = matchingWords(fingerPrint(word))
 
 
   // Test code with for example:
@@ -91,9 +89,6 @@ object Anagrams extends App {
 
   }
 
-  println(subseqs("abbc"))
-
-
   // Test code with for example:
   // println(subseqs("aabbc"))
 
@@ -109,13 +104,6 @@ object Anagrams extends App {
     def subtract(x: FingerPrint, y: FingerPrint): String = {
       x.toList.diff(y.toList).mkString
     }
-    // Test code with for example:
-    subtract("aabbcc", "abc")  // should return "abc"
-    subtract("a", "abc")       // should return ""
-    subtract("xyz", "z")       // should return xy
-    subtract("xxxxyzzzz", "xxzz")       // should return xxyzz
-    subtract("", "xxzz")      // should return ""
-    subtract("", "abc")      // should return ""
 
 
     /** Returns a list of all anagram sentences of the given sentence.
@@ -137,29 +125,22 @@ object Anagrams extends App {
       * Note: There is only one anagram of an empty sentence.
       */
     def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-      val fgprint = fingerPrint(sentence)
-      def findAnagrams(finger : FingerPrint, wordAcc : List[Word],
-                       actualWordAcc: List[Word], accumulator : Sentence = List(),
-                       accSentence: List[Sentence] = List()) : List[Sentence] = {
-        wordAcc match {
-          case Nil => accSentence
-          case _ if (finger == "") => accumulator :: accSentence
-          case x::xs => {
-            if (subtract(x, finger) == "") {
-              findAnagrams(subtract(finger, x), wordAcc, actualWordAcc, x :: accumulator, accSentence) ++ findAnagrams(finger, xs, actualWordAcc, accumulator, accSentence)
-            } else {
-              findAnagrams(finger, xs, actualWordAcc, accumulator, accSentence)
-            }
-          }
-        }
+
+      def loop(fp: FingerPrint): List[Sentence] = fp match {
+        // trivial case
+        case r if r.isEmpty => List(List())
+        case _ => for {
+          subseq <- subseqs(fp)
+          anagram <- wordAnagrams(subseq) // take the anagrams from the subsequences of the fingerprint
+          xs <- loop(subtract(fp, subseq)) // recursive call for the rest of the subsequence
+        } yield anagram::xs
       }
-      val wordAcc = subseqs(fgprint).flatMap(wordAnagrams)
-      findAnagrams(fgprint, wordAcc, wordAcc)
+      loop(fingerPrint(sentence))
     }
   // Test code with for example:
   // println(sentenceAnagrams(List("eat", "tea")))
    println(sentenceAnagrams(List("you", "olive")))
    println(sentenceAnagrams(List("I", "love", "you")))
-  println(sentenceAnagrams(List("jason", "love", "you")))
+   println(sentenceAnagrams(List("jason", "love", "you")))
 
 }
